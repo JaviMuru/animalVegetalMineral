@@ -1,0 +1,24 @@
+{
+  "Animal": {
+    "questions": ["Es marron?", "Tiene 4 patas?"],
+    "answers": {
+      "perro": {
+        "user": "Javi",
+        "correctAnswers": [0,1]
+      }
+    }
+  },
+  "Vegetal": {
+    "questions": {
+    },
+    "answers": {
+    }
+  },
+  "Mineral": {
+    "questions": {
+    },
+    "answers": {
+    }
+  }
+}
+  

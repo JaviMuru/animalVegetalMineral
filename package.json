@@ -1,0 +1,14 @@
+{
+  "name": "animalvegetalmineral",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "author": "Javi Muruzábal",
+  "license": "ISC",
+  "dependencies": {
+    "inquirer": "^6.0.0"
+  }
+}
