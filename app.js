@@ -1,5 +1,5 @@
 const inquirer = require('inquirer');
-const db = require('./db.json');
+const original_db = require('./db.json');
 let prompt = inquirer.createPromptModule();
 
 const initQuestion = [
@@ -33,10 +33,11 @@ async function generateElementQuestions(db, element) {
   let questionsDelimiter = 2;
   let i = 0;
   let questions = db.questions;
-  let promises = [];
-
+  let promises = [];  
+  let alt_index = Math.floor(Math.random() * questions.length)
+  
   for (const index in questions) {
-    promises.push(await questionize(questions[index], index));
+    promises.push(await quiz(questions[index], index));
   }
 
   Promise.all(promises)
@@ -49,18 +50,66 @@ async function generateElementQuestions(db, element) {
         console.log(`El ${element} que has pensado es: ${result.result}`);
         return;
       }
-      prompt({
-        message: '¿Queires Jugar a Animal-Vegetal-Mineral?',
-        type: 'confirm',
-        default: 'true',
-        name: 'startGame'
-      })
-      .then()
-      
+      getNewElement(db, element);
     })
 
 }
 
+async function getNewElement(db, element) {  
+  const userElementPromise = await getUserElement(element);
+  const userQuestionPromise = await getUserQuestion(element);
+  
+  Promise.all([userElementPromise, userQuestionPromise])
+    .then(values => {
+      const userElement = values[0];
+      const userQuestion = values[1];   
+      if (userElement && userQuestion) {
+        writeNewElement(original_db, element, userElement, userQuestion);
+      }
+    });
+}
+
+function getUserElement(element){
+  let message = {
+    message: `¿En qué ${element} estabas pensando?`,
+    type: 'input',
+    name: 'userThink'
+  };
+  return prompt(message)
+    .then(response => {      
+      if (response) {
+        return response.userThink;
+      }
+    })
+}
+
+function writeNewElement(original_db, type, userElement, userQuestion) {
+  original_db[`${type}`].questions.push(`¿${userQuestion}?`);
+  let indexQuestion = (original_db[`${type}`].questions.length) - 1;
+
+  userElement = {
+    user: 'Jacinto',
+    correctAnswers: [0,1,indexQuestion]
+  }
+  original_db[`${type}`].answers.push(userElement)
+  console.log(original_db[`${type}`].answers);
+}
+
+function getUserQuestion(element){
+  let message = {
+    message: `Introduce la pregunta:`,
+    type: 'input',
+    name: 'userQuestion'
+  };
+  return prompt(message)
+    .then(response => {
+      if (response) {
+        return response.userQuestion;
+      }
+    });
+}
+
+//TODO: review code and logic
 function findResult(answers, db_answers) {
   let resultFinded = false;
   for (key in db_answers) {
@@ -76,14 +125,12 @@ function findResult(answers, db_answers) {
         result: key,
         user: db_answers[key].user
       }
-    } else {
-
     }
   }
   return;
 }
 
-async function questionize(question, index) {
+async function quiz(question, index) {
   return prompt(  {
     message: `${question}`,
     type: 'confirm',
@@ -105,14 +152,18 @@ initApp()
     }
     return prompt(userInfoQuestions)
   })
-  .then(userInfo => {    
-    return {
-      db: db[`${userInfo.element}`],
-      element: userInfo.element
+  .then(userInfo => {
+    if (userInfo) {
+      return {
+        db: original_db[`${userInfo.element}`],
+        element: userInfo.element
+      }
     }
   })
   .then(values => {
-    const db =  values.db;
-    const element = values.element;
-    return generateElementQuestions(db, element)
+    if (values) {
+      const db =  values.db;
+      const element = values.element;
+      return generateElementQuestions(db, element)
+    }
   })

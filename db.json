@@ -1,24 +1,39 @@
 {
   "Animal": {
     "questions": ["Es marron?", "Tiene 4 patas?"],
-    "answers": {
-      "perro": {
-        "user": "Javi",
-        "correctAnswers": [0,1]
-      }
-    }
+    "answers": 
+      [
+        {
+          "perro": {
+            "user": "Javi",
+            "correctAnswers": [0,1]
+          }
+        }
+      ]
   },
   "Vegetal": {
-    "questions": {
-    },
-    "answers": {
-    }
+    "questions": ["Es verde?", "Tiene hojas?"],
+    "answers":
+      [
+        {
+          "lechuga": {
+            "user": "Javi",
+            "correctAnswers": [0,1]
+          }
+        }
+      ]
   },
   "Mineral": {
-    "questions": {
-    },
-    "answers": {
-    }
+    "questions": ["Es gris?", "Es ferroso?"],
+    "answers":
+      [
+        {
+          "hierro": {
+            "user": "Javi",
+            "correctAnswers": [0,1]
+          }
+        }
+      ]
   }
 }
   
