@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/JaviMuru/animalVegetalMineral/issues"
   },
-  "homepage": "https://github.com/JaviMuru/animalVegetalMineral#readme"
+  "homepage": "https://github.com/JaviMuru/animalVegetalMineral#readme",
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "inquirer": "^6.0.0"
+  }
 }

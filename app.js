@@ -1,4 +1,5 @@
 const inquirer = require('inquirer');
+const fs = require('fs');
 const original_db = require('./db.json');
 let prompt = inquirer.createPromptModule();
 
@@ -29,7 +30,7 @@ function initApp() {
   return prompt(initQuestion)
 }
 
-async function generateElementQuestions(db, element) {
+async function generateElementQuestions(db, element, userName) {
   let questionsDelimiter = 2;
   let i = 0;
   let questions = db.questions;
@@ -50,21 +51,21 @@ async function generateElementQuestions(db, element) {
         console.log(`El ${element} que has pensado es: ${result.result}`);
         return;
       }
-      getNewElement(db, element);
+      getNewElement(db, element, userName);
     })
 
 }
 
-async function getNewElement(db, element) {  
+async function getNewElement(db, element, userName) {  
   const userElementPromise = await getUserElement(element);
   const userQuestionPromise = await getUserQuestion(element);
   
   Promise.all([userElementPromise, userQuestionPromise])
     .then(values => {
       const userElement = values[0];
-      const userQuestion = values[1];   
+      const userQuestion = values[1];
       if (userElement && userQuestion) {
-        writeNewElement(original_db, element, userElement, userQuestion);
+        writeNewElement(original_db, element, userElement, userQuestion, userName);
       }
     });
 }
@@ -83,16 +84,25 @@ function getUserElement(element){
     })
 }
 
-function writeNewElement(original_db, type, userElement, userQuestion) {
+function writeNewElement(original_db, type, userElement, userQuestion, userName) {
   original_db[`${type}`].questions.push(`¿${userQuestion}?`);
   let indexQuestion = (original_db[`${type}`].questions.length) - 1;
-
-  userElement = {
-    user: 'Jacinto',
+  //Replace correct answers
+  let result = {};
+  result[`${userElement}`] = {
+    user: userName,
     correctAnswers: [0,1,indexQuestion]
-  }
-  original_db[`${type}`].answers.push(userElement)
-  console.log(original_db[`${type}`].answers);
+  };
+  
+  original_db[`${type}`].answers.push(result)
+  
+  //Write to File
+  fs.writeFile("./db.json", JSON.stringify(original_db), 'utf8', function (err) {
+    if (err) {
+      return console.log(err);
+    }
+    console.log("Fichero actulizado");
+  })
 }
 
 function getUserQuestion(element){
@@ -156,7 +166,8 @@ initApp()
     if (userInfo) {
       return {
         db: original_db[`${userInfo.element}`],
-        element: userInfo.element
+        element: userInfo.element,
+        user: userInfo.userName
       }
     }
   })
@@ -164,6 +175,7 @@ initApp()
     if (values) {
       const db =  values.db;
       const element = values.element;
-      return generateElementQuestions(db, element)
+      const userName = values.user;
+      return generateElementQuestions(db, element, userName)
     }
   })
