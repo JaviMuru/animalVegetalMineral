@@ -2,13 +2,18 @@
   "name": "animalvegetalmineral",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "start": "node app.js"
   },
-  "author": "Javi Muruzábal",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JaviMuru/animalVegetalMineral.git"
+  },
+  "author": "",
   "license": "ISC",
-  "dependencies": {
-    "inquirer": "^6.0.0"
-  }
+  "bugs": {
+    "url": "https://github.com/JaviMuru/animalVegetalMineral/issues"
+  },
+  "homepage": "https://github.com/JaviMuru/animalVegetalMineral#readme"
 }
